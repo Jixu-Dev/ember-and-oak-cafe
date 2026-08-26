@@ -1,0 +1,259 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ── Google Fonts are loaded in index.html ── */
+
+/* ── Design tokens ── */
+:root {
+  --paper: #F4ECDD;
+  --sand: #EBE0CD;
+  --card: #FCF8EF;
+  --ink: #23190F;
+  --clay: #C05A34;
+  --clay-deep: #9E4626;
+  --olive: #5E6347;
+  --gold: #C79A3A;
+}
+
+/* ── Base ── */
+html {
+  scroll-behavior: auto; /* Lenis handles smooth scroll */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  background-color: var(--paper);
+  color: var(--ink);
+  overflow-x: hidden;
+  font-family: 'Inter', system-ui, sans-serif;
+  font-feature-settings: 'kern' 1, 'liga' 1;
+}
+
+::selection {
+  background: var(--clay);
+  color: var(--card);
+}
+
+/* ── Lenis smooth scroll ── */
+html.lenis, html.lenis body { height: auto; }
+.lenis.lenis-smooth { scroll-behavior: auto !important; }
+.lenis.lenis-smooth [data-lenis-prevent] { overscroll-behavior: contain; }
+
+/* ── Paper-grain overlay (multiply, so it reads as texture not haze) ── */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 9998;
+  opacity: 0.05;
+  mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+  background-size: 220px 220px;
+}
+
+/* ── Canvas cover-fit ── */
+canvas { display: block; width: 100%; height: 100%; }
+
+/* ── Editorial helpers ── */
+.label {
+  font-family: 'Space Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+}
+
+.hair { height: 1px; background: currentColor; opacity: 0.18; }
+
+/* Link underline that grows from the left */
+.link-underline {
+  position: relative;
+}
+.link-underline::after {
+  content: '';
+  position: absolute;
+  left: 0; bottom: -2px;
+  width: 100%; height: 1px;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.link-underline:hover::after { transform: scaleX(1); }
+
+/* ── Marquee ── */
+.marquee-track {
+  display: flex;
+  width: max-content;
+  animation: marquee 32s linear infinite;
+}
+@keyframes marquee {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+/* ── Scrollbar ── */
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-track { background: var(--sand); }
+::-webkit-scrollbar-thumb { background: var(--clay); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: var(--clay-deep); }
+
+/* ── Focus ── */
+:focus-visible { outline: 2px solid var(--clay); outline-offset: 3px; }
+
+/* ── Glassmorphism ── */
+.glass {
+  background: rgba(252, 248, 239, 0.08);
+  backdrop-filter: blur(16px) saturate(1.2);
+  -webkit-backdrop-filter: blur(16px) saturate(1.2);
+  border: 1px solid rgba(252, 248, 239, 0.12);
+}
+.glass-dark {
+  background: rgba(35, 25, 15, 0.6);
+  backdrop-filter: blur(20px) saturate(1.3);
+  -webkit-backdrop-filter: blur(20px) saturate(1.3);
+  border: 1px solid rgba(252, 248, 239, 0.08);
+}
+
+/* ── Animated gradient border ── */
+.glow-card {
+  position: relative;
+  overflow: hidden;
+}
+.glow-card::before {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  border-radius: inherit;
+  background: conic-gradient(from 0deg, var(--clay), var(--gold), var(--clay), var(--olive), var(--clay));
+  background-size: 400% 400%;
+  animation: glowRotate 4s linear infinite;
+  z-index: -1;
+}
+.glow-card::after {
+  content: '';
+  position: absolute;
+  inset: 2px;
+  border-radius: inherit;
+  background: var(--ink);
+  z-index: -1;
+}
+@keyframes glowRotate {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* ── SVG draw animation ── */
+.draw-svg path,
+.draw-svg line,
+.draw-svg circle,
+.draw-svg polyline {
+  stroke-dasharray: 300;
+  stroke-dashoffset: 300;
+  transition: stroke-dashoffset 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.draw-svg.is-visible path,
+.draw-svg.is-visible line,
+.draw-svg.is-visible circle,
+.draw-svg.is-visible polyline {
+  stroke-dashoffset: 0;
+}
+
+/* ── Coffee steam particles ── */
+.steam-container {
+  position: relative;
+  width: 40px;
+  height: 60px;
+}
+.steam-particle {
+  position: absolute;
+  bottom: 0;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--card);
+  filter: blur(3px);
+}
+.steam-particle:nth-child(1) { left: 6px; }
+.steam-particle:nth-child(2) { left: 16px; }
+.steam-particle:nth-child(3) { left: 26px; }
+
+/* ── 3D Tilt Card ── */
+.tilt-card {
+  transform-style: preserve-3d;
+  perspective: 800px;
+  transition: transform 0.3s ease-out;
+}
+.tilt-card-inner {
+  transform-style: preserve-3d;
+  transition: transform 0.3s ease-out;
+}
+
+/* ── Shimmer text ── */
+.shimmer-text {
+  background: linear-gradient(
+    90deg,
+    var(--clay) 0%,
+    var(--gold) 35%,
+    var(--clay) 50%,
+    var(--gold) 65%,
+    var(--clay) 100%
+  );
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: shimmer 3s linear infinite;
+}
+
+/* ── Horizontal timeline scroll track ── */
+.timeline-track {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.timeline-track::-webkit-scrollbar { display: none; }
+
+/* ── Value card hover line ── */
+.value-line {
+  height: 2px;
+  background: linear-gradient(90deg, var(--clay) 0%, transparent 100%);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.group:hover .value-line,
+.group:focus-within .value-line {
+  transform: scaleX(1);
+}
+
+/* ── Decorative dot grid ── */
+.dot-grid {
+  background-image: radial-gradient(circle, var(--clay) 1px, transparent 1px);
+  background-size: 24px 24px;
+  opacity: 0.08;
+}
+
+/* ── Split reveal mask ── */
+.mask-reveal {
+  clip-path: inset(0 100% 0 0);
+  transition: clip-path 1s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.mask-reveal.is-visible {
+  clip-path: inset(0 0% 0 0);
+}
+
+/* ── Reduced motion ── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  .marquee-track { animation: none !important; }
+  .steam-particle { animation: none !important; }
+  .glow-card::before { animation: none !important; }
+  .shimmer-text { animation: none !important; }
+}
